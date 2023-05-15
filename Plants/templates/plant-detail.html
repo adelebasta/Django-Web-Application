@@ -1,0 +1,160 @@
+{% extends 'home.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ that_one_plant.name }}{% endblock %}
+
+{% block content %}
+    <div style="margin: 5em 3em">
+    <div class="row plant-detail">
+      <div class="column">
+          <img class="main-plant" src ="{{ that_one_plant.plant_picture.url }}" width="400" height="600" style="object-fit: cover" >
+      </div>
+      <div class="column second-section" style="margin-top: 3em">
+          <table>
+            <tr>
+                <td><h2><b>{{ that_one_plant.name }}</b></h2><br></td>
+            </tr>
+            <tr>
+                <td style="max-width: 15em">{{ that_one_plant.description }}<br></td>
+            </tr>
+          <tr><td><br></td></tr>
+            <tr>
+                <td><b>Posted by:</b></td>
+                <td><img class="user-pic" src ="{{ that_one_plant.myuser.profile_picture.url }}" width="20" height="20" style="object-fit: cover"> {{ that_one_plant.myuser.username }}<br></td>
+            </tr>
+            <tr>
+                <td><b>Sunlight:</b></td>
+                <td>{{ that_one_plant.get_sunlight_display }}<br></td>
+            </tr>
+            <tr>
+                <td><b>Size:</b></td>
+                <td>{{ that_one_plant.size }}cm<br></td>
+            </tr>
+            <tr>
+                <td><b>Price:</b></td>
+                <td>{{ that_one_plant.price }}€<br></td>
+            </tr>
+            <tr>
+                <td><b>Date published:</b></td>
+                <td>{{ that_one_plant.timestamp }}<br></td>
+          <tr>
+           <tr>
+                <td><b>Average Rating:</b></td>
+                <td>
+                    {% if that_one_plant.get_stars != 0 %}
+                        {% for picture in that_one_plant.get_stars %}
+                            <img src="../../../media/plant_pictures/{{ picture }}.png" height="15px" width="15px" style="object-fit: cover" alt="star"/>
+                        {% endfor %}
+                    {% else %}
+                        No reviews yet
+                    {% endif %}
+                    <br>
+                </td>
+          <tr>
+            <td>
+              {% if user.is_authenticated %}
+                <br>
+                <form method="POST">
+                    {% csrf_token %}
+                    <button class="btn btn-info" type="submit" name="add">Add to cart</button>
+                    <button class="btn btn-info" type="submit" name="download">Download PDF</button>
+                </form>
+            {% else %}
+                  <p><a href="{% url 'login' %}">Login</a> to add to shopping cart</p>
+            {%  endif %}
+            </td>
+          </tr>
+          <tr>
+              <td><br>
+              {# Edit and Delete buttons #}
+              <div class="plant-detail-buttons">
+                {% if can_delete_or_edit or that_one_plant.myuser_id == user.id %}
+                    <a class="btn" href="{% url 'plant-edit' that_one_plant.id %}">
+                        Edit plant
+                    </a>
+                    <a class="btn" href="{% url 'plant-delete' that_one_plant.id %}">
+                        Delete plant
+                    </a>
+                    <br><br>
+                {% endif %}
+              </div>
+              </td>
+          </tr>
+            </table>
+      </div>
+    </div>
+
+    {# Reviews #}
+    <div style="margin-top: 3em">
+    <h4 style="margin-left: -0.8em">Reviews</h4>
+    {% for comment in comments_for_that_one_plant %}
+        <div class="form-group {%if field.errors %}has-error{%endif%}">
+
+        <div class="row plant-detail">
+        <div class="column">
+             <div style="margin-top: 0.5em">
+                 {{ comment.get_votes_count }}
+            <a href="{% url 'comment-vote' that_one_plant.id comment.id 'up' %}">
+                <img src="../../../media/plant_pictures/up.png" height="20" width="20">
+
+            </a>
+            <span>{{ downvotes }}</span>
+            <a href="{% url 'comment-vote' that_one_plant.id comment.id 'down' %}">
+                <img src="../../../media/plant_pictures/down.png" height="20" width="20">
+            </a>
+             </div>
+            <br>
+        </div>
+
+          <div class="column" style="margin-left: 1em">
+            <img class="user-pic" src="../../../media/{{ comment.myuser.profile_picture }}" height="40px" width="40px" style="object-fit: cover" alt="profile"/>
+          </div>
+         <div class="column" style="align-self: center; margin-left: 0.5em">
+            <p><b>{{ comment.myuser.username }}
+                {% for picture in comment.get_stars %}
+                    <img src="../../../media/plant_pictures/{{ picture }}.png" height="15px" width="15px" style="object-fit: cover" alt="star"/>
+                {% endfor %}
+            </b><br>{{ comment.text }}</p>
+         </div>
+        <div class="column" style="margin-left: 2em">
+            {% if can_delete_or_edit or comment.myuser_id == user.id %}
+                <a class="btn-sm btn-info" href="{% url 'comment-edit-delete' comment.id %}">Edit</a>
+                <a class="btn-sm delete-comment" href="{% url 'comment-delete' comment.id %}">Delete</a>
+            {% endif %}
+            {% if comment.myuser_id != user.id %}
+                {% if comment.is_reported_by_me %}
+                    <a class="btn-sm badge-danger" href="{% url 'report-comment' that_one_plant.id comment.id %}">Reported</a>
+                {% else %}
+                    <a class="btn-sm btn-warning" href="{% url 'report-comment' that_one_plant.id comment.id %}">Report</a>
+                {% endif %}
+            {% endif %}
+            {% if comment.is_reported %}
+                {% if can_delete_or_edit %}
+                    <a class="btn-sm btn-warning" href="{% url 'clear-report' that_one_plant.id comment.id %}">Clear report</a>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+    </div>
+    <br>
+
+{% if comment_form %}
+    <b>Type in your review...</b><br>
+    <div class="masthead mt-n5h-100">
+        <div class="row gx-4 gx-lg-5 w-50">
+            <div class="col-lg-8" align="left">
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ comment_form|crispy }}
+                    <button type="submit" class="btn btn-success">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% else %}
+        <b>You have already reviewed the product!</b><br>
+    {% endif %}
+</div>
+{% endblock %}

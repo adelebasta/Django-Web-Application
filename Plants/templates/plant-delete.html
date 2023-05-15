@@ -1,0 +1,15 @@
+{% extends 'home.html' %}
+
+{% block title %}Delete Plant{% endblock %}
+
+{% block content %}
+<div style="margin: 7em 3em">
+    <form method="post">{% csrf_token %}
+        <p>Are you sure you want to delete {{ plant.name }}?</p>
+        <a class="btn btn-danger" href="{% url 'plants-list' %}">Cancel</a>
+        <button class="btn btn-success" type="submit" value="Confirm">Submit</button>
+
+    </form>
+</div>
+
+{% endblock %}

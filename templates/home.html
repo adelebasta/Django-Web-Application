@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}?{% now "U" %}">
+{% endblock %}
+
+{% block title %}Plantsome{% endblock %}
+
+<br>
+<div>
+{% block content %}
+    <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img src="../media/plant_pictures/plant_c.jpg" alt="monster with leaf">
+
+            <div class="container">
+              <div class="carousel-caption text-left rounded">
+                <h1>Plantsome</h1>
+
+                <p>The pun says it all. Please enjoy our collection of the prettiest plants, for you living room, kitchen, bedroom, dungeon, man-cave, gallery, wintergarden or garden-garden. We don't care. Just do you.</p>
+                  {% if user.is_authenticated %}
+                    {% block logged_in_content %}
+                        <div class="col-lg-8 align-self-baseline">
+                            <a class="btn btn-light btn-xl" href="{% url 'plants-list' %}">Show me the plants</a>
+                        </div>
+                    {% endblock %}
+                  {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+{% endblock %}

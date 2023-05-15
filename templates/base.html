@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+<head>
+    {% load static %}
+    {% block css %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}?{% now "U" %}">
+        <script src="{% static 'js/scripts.js' %}"></script>
+    {% endblock %}
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <title>{% block title %}Plantsome{% endblock %}</title>
+</head>
+<body>
+    {% block header %}
+        <nav class="navbar navbar-expand-md navbar-light fixed-top">
+        <a class="navbar-brand" href="/"><img src="../../../media/plant_pictures/logo2.png" alt="Logo"/></a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarCollapse"
+          aria-controls="navbarCollapse"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+          id="top-menu-button"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="/">Home</a>
+            </li>
+              {% if user.is_authenticated %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'plants-list' %}">Plants</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href={% url 'plant-search' %}>Search</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href={% url 'plant-create' %}>Add a new plant</a>
+                </li>
+                  {% if user.type == 'SU' %}
+                    <li class="nav-item">
+                      <a class="nav-link" href={% url 'myuser-list' %}>Users</a>
+                    </li>
+                  {% endif %}
+              {% endif %}
+          </ul>
+          <div style="float: right" class="menu-buttons">
+            {% if user.is_authenticated %}
+                <a class="btn mr-2" href="{% url 'shopping-cart-show' %}">
+                    Shopping Cart ({{ request.user.count_shopping_cart_items }})
+                <a class="btn btn-xl" href="{% url 'logout' %}">Logout</a>
+                <img class="user-pic" src="../../../media/{{ request.user.profile_picture }}" height="38px" width="38px" style="object-fit: cover" alt="profile"/>
+            {% else %}
+                 <a class="btn btn-xl" href="{% url 'login' %}">Login</a>
+                <a class="btn btn-xl ml-2" href="{% url 'signup' %}">Sign up</a>
+            {% endif %}
+
+            </a>
+        </div>
+        </div>
+      </nav>
+
+    {% endblock %}
+
+    {% block content %}
+    {% endblock %}
+</body>
+</html>

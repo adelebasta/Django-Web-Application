@@ -1,0 +1,35 @@
+{% extends 'home.html' %}
+{% load static %}
+
+{% block title %}Shopping cart{% endblock %}
+
+{% block content %}
+    <div style="margin-left: 3em; margin-top: 7em">
+    {% if shopping_cart_is_empty %}
+        <p>Your shopping cart is empty.</p>
+    {% else %}
+        <p><b>Total amount: {{ total }} €</b></p>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="cart-buttons">
+                <button type="submit" class="btn" name="empty">Empty the shopping cart</button>
+                <button type="submit" class="btn" name="pay">Pay with credit card</button>
+            </div>
+        </form>
+        <div style="margin-left: 1em">
+        {% for item in shopping_cart_items %}
+            <div class="row plant-detail">
+                <div class="column">
+                    <img src="../../media/{{ item.plant_picture }}" height="150" width="150" style="object-fit: cover"><br>
+                </div>
+                 <div class="column second-section">
+                    <b>{{ item.product_name }}</b><br>
+                    {{ item.quantity }} x {{ item.price }} € <br>
+                </div>
+            </div>
+            <br>
+        {% endfor %}
+        </div>
+    {% endif %}
+    </div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'home.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Plant edit{% endblock %}
+
+{% block content %}
+<div style="margin: 3em 0em">
+            <div class="masthead mt-n5 align-items-center justify-content-center h-100">
+        <div class="row gx-4 gx-lg-5 pt-5 m-auto w-50 align-items-center justify-content-center">
+            <div class="col-lg-8 align-self-end">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form | crispy }}
+                <div class="d-flex flex-row form-buttons">
+                    <button class="btn btn-success" type="submit" name="edit">Edit</button>
+                    <a class="btn btn-danger" type="submit" href="{% url 'plant-delete' that_one_plant.id %}"
+                       onclick="return confirm('Are you sure you want to delete this plant?')">Delete this plant
+                    </a>
+                    <a class="btn btn-warning" type="submit" href="{% url 'plant-detail' that_one_plant.id %}">Cancel</a><br>
+                </div>
+            </form>
+        </div>
+    </div>
+            </div>
+    </div>
+{% endblock %}
+

@@ -1,0 +1,22 @@
+{% extends 'home.html' %}
+
+{% block title %}Users list{% endblock %}
+
+{% block content %}
+<h2>Users list</h2>
+<ul>
+<div class="flex-container" style="margin-top: 5em; justify-content: end;">
+    {% for myuser in all_myusers %}
+        <div style="margin: 0.5em; text-align: center">
+        <p style="font-size: 0.8em">{{ myuser.first_name }} {{ myuser.last_name }} {{ myuser.date_of_birth }}<br></p>
+        {% if myuser.profile_picture %}
+            <img src="{{ myuser.profile_picture.url }}" height="100" width="100" style="object-fit: cover"><br>
+        {% else %}
+            <img src="https://i.pinimg.com/474x/cd/f5/66/cdf566b9f0b256026853e8d33abbd7e6.jpg" height="150" width="150" style="object-fit: cover"><br>
+        {% endif %}
+        <br>
+        </div>
+    {% endfor %}
+</div>
+</ul>
+{% endblock %}

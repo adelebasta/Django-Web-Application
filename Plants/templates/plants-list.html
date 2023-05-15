@@ -1,0 +1,50 @@
+{% extends 'home.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}?{% now "U" %}">
+{% endblock %}
+
+{% block title %}Plants list{% endblock %}
+
+{% block content %}
+    <h2>Plants list</h2>
+    <div class="album py-3">
+          <div class="row">
+             <div class="flex-container">
+                {% for plant in all_the_plants %}
+                    <div class="plant-description">
+                        <a href="{{ plant.id }}" style="color: black;">
+                            <img class="main-plant" src ="{{ plant.plant_picture.url }}"><br><br>
+                            <b class="rounded">{{ plant.name }}</b>
+                        </a>
+                        <p style="font-size: 0.7em;">Sunlight: {{ plant.get_sunlight_display }}
+                        <br>Added: {{ plant.timestamp }}<br><br>
+                        <b>{{ plant.price }}€</b>
+                        </p>
+                        {% if plant.get_stars != 0 %}
+                            <p>
+                            {% for picture in plant.get_stars %}
+                                <img src="../../../media/plant_pictures/{{ picture }}.png" height="15px" width="15px" style="object-fit: cover" alt="star"/>
+                            {% endfor %}
+                            </p>
+                        {% else %}
+                            <p style="font-size: 0.6em">No reviews yet</p>
+                        {% endif %}
+                        </p>
+                        {% if user.is_authenticated %}
+                            <form method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="product_id" value="{{plant.id}}">
+                                <button class="btn btn-info" type="submit" name="add" style="margin-top: -1em">Add to cart</button>
+                            </form>
+                        {%  endif %}
+                    {% if can_delete_or_edit or plant.myuser_id == user.id %}
+                        <a class="btn delete-plant" href="{% url 'plant-delete' plant.id %}">x</a>
+                    {% endif %}
+                    </div>
+                {% endfor %}
+          </div>
+        </div>
+    </div>
+{% endblock %}

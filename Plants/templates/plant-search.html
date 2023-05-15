@@ -1,0 +1,49 @@
+{% extends 'home.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Search plant{% endblock %}
+
+{% block content %}
+<h2>Search plant</h2>
+    <div class="masthead mt-n5 align-items-center justify-content-center h-100">
+        <div class="row gx-4 gx-lg-5 pt-5 m-auto w-50 align-items-center justify-content-center">
+            <div class="col-lg-8 align-self-end">
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <button class="btn btn-success" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <br>
+    <br>
+<div style="margin-left: 3em">
+    {% if show_results %}
+        <h5>Plants found:</h5><br>
+        <div class="album py-3">
+          <div class="row">
+             <div class="flex-container">
+                {% for plant in plants_found %}
+                    <div class="plant-description">
+                        <img src ="{{ plant.plant_picture.url }}"><br><br>
+                        <a href="{{ plant.id }}" style="color: black;"><b>{{ plant.name }}</b></a>
+                        <p style="font-size: 0.7em;">Sunlight: {{ plant.get_sunlight_display }}
+                        <br>Added: {{ plant.timestamp }}</p>
+                        {% if plant.get_stars != 0 %}
+                            <p>
+                            {% for picture in plant.get_stars %}
+                                <img src="../../../media/plant_pictures/{{ picture }}.png" height="15px" width="15px" style="object-fit: cover" alt="star"/>
+                            {% endfor %}
+                            </p>
+                        {% else %}
+                            <p style="font-size: 0.6em">No reviews yet</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+          </div>
+        </div>
+    </div>
+    {% endif %}
+    </div>
+{% endblock %}
